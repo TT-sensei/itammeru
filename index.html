@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>いためるちょうりのひみつをさぐろう！</title>
+  <style>
+    :root {
+      --bg: #fff9ef;
+      --text: #2b2b2b;
+      --card: #ffffff;
+      --accent1: #66bb6a;
+      --accent2: #42a5f5;
+      --accent3: #ffa726;
+      --accent4: #ec407a;
+      --accent5: #ab47bc;
+      --accent6: #26a69a;
+      --shadow: 0 6px 14px rgba(0,0,0,.1);
+      --radius: 18px;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Hiragino Kaku Gothic ProN", "Yu Gothic", "Meiryo", sans-serif;
+      background: linear-gradient(180deg, #fffdf7, var(--bg));
+      color: var(--text);
+      line-height: 1.7;
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: #ffffffdd;
+      backdrop-filter: blur(4px);
+      border-bottom: 2px solid #ffe6b8;
+      padding: 10px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(1.2rem, 2.8vw, 1.8rem);
+      color: #e67e22;
+    }
+
+    .top-controls {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      border: none;
+      border-radius: 999px;
+      padding: 11px 18px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      background: #ffd180;
+      color: #4e342e;
+      box-shadow: var(--shadow);
+      transition: transform .15s ease;
+      min-height: 44px;
+    }
+
+    .btn:hover, .btn:focus-visible { transform: translateY(-2px); }
+
+    main {
+      width: min(1080px, 92%);
+      margin: 18px auto 40px;
+    }
+
+    .page {
+      display: none;
+      animation: fadeIn .35s ease;
+    }
+
+    .page.active { display: block; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .hero {
+      padding: 18px;
+      background: #fff;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      margin-bottom: 16px;
+    }
+
+    .hero p { font-size: 1.08rem; margin: .4em 0; }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 14px;
+    }
+
+    .nav-card {
+      border: 4px solid transparent;
+      border-radius: var(--radius);
+      padding: 14px;
+      background: var(--card);
+      box-shadow: var(--shadow);
+      cursor: pointer;
+      text-align: left;
+      min-height: 145px;
+      transition: transform .15s ease, box-shadow .15s ease;
+    }
+
+    .nav-card:hover, .nav-card:focus-visible {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 16px rgba(0,0,0,.14);
+    }
+
+    .icon {
+      font-size: 1.9rem;
+      width: 52px;
+      height: 52px;
+      border-radius: 14px;
+      display: grid;
+      place-items: center;
+      color: #fff;
+      margin-bottom: 6px;
+    }
+
+    .section-title {
+      margin: 0;
+      font-size: 1.45rem;
+    }
+
+    .section-sub {
+      margin-top: 2px;
+      font-size: .95rem;
+      color: #555;
+    }
+
+    .content-card {
+      background: #fff;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 16px;
+      margin: 14px 0;
+      border-left: 10px solid #ccc;
+    }
+
+    .quiz-options {
+      display: grid;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .option {
+      border: 2px solid #ddd;
+      border-radius: 14px;
+      background: #fafafa;
+      padding: 12px;
+      font-size: 1rem;
+      text-align: left;
+      cursor: pointer;
+      min-height: 44px;
+    }
+
+    .option.correct { border-color: #2e7d32; background: #e8f5e9; }
+    .option.wrong { border-color: #c62828; background: #ffebee; }
+
+    .quiz-result {
+      margin-top: 10px;
+      font-weight: 700;
+      padding: 10px;
+      border-radius: 12px;
+      background: #f7f7f7;
+    }
+
+    .point-box {
+      background: #fffdf4;
+      border: 2px dashed #ffcc80;
+      border-radius: 12px;
+      padding: 10px;
+      margin: 10px 0;
+    }
+
+    .point {
+      background: #fff;
+      border-radius: 10px;
+      padding: 8px 10px;
+      margin: 6px 0;
+    }
+
+    .hl {
+      font-weight: 800;
+      padding: 2px 6px;
+      border-radius: 8px;
+      color: #fff;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 8px;
+      overflow: hidden;
+      border-radius: 12px;
+    }
+
+    th, td {
+      border: 1px solid #ddd;
+      padding: 10px;
+      font-size: .98rem;
+      vertical-align: top;
+      background: #fff;
+    }
+
+    th { background: #f3f3f3; }
+
+    .mini {
+      font-weight: 800;
+      border-radius: 12px;
+      padding: 10px;
+      color: #1b1b1b;
+      background: #fff8e1;
+    }
+
+    .fill-area input {
+      font-size: 1rem;
+      padding: 10px;
+      border: 2px solid #ddd;
+      border-radius: 10px;
+      min-height: 44px;
+      width: min(360px, 100%);
+    }
+
+    .legend {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .badge {
+      display: inline-block;
+      font-size: .88rem;
+      color: #fff;
+      border-radius: 999px;
+      padding: 4px 10px;
+      margin-bottom: 6px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>いためるちょうりのひみつをさぐろう！</h1>
+    <div class="top-controls">
+      <button class="btn" onclick="showPage('home')">🏠 トップ</button>
+      <button class="btn" onclick="showPage('summary')">📝 まとめ</button>
+    </div>
+  </header>
+
+  <main id="app"></main>
+
+  <script>
+    const topics = [
+      {
+        id: 'texture', icon: '🥬', color: '#66bb6a', title: '① 食感（しょっかん）',
+        quizQ: 'いためると、どうしてシャキシャキしやすいの？',
+        quiz: [
+          { t: '水をたくさん入れて、長くにるから', c: false },
+          { t: '加熱しすぎず、野菜の細胞がこわれすぎないから', c: true },
+          { t: '冷たいまま食べるから', c: false }
+        ],
+        explain: [
+          'いためると、<span class="hl" style="background:#66bb6a;">ほどよい歯ごたえ</span>がのこります。',
+          '加熱しすぎないので、野菜の細胞がこわれすぎず、べちゃっとしにくいです。',
+          'シャキシャキした心地よい食感を楽しめます。'
+        ],
+        compare: ['やわらかくなりすぎることがある', 'ほどよい歯ごたえがのこる'],
+        mini: 'つまり、いためるとシャキシャキ食感をいかしたまま、おいしく仕上げられる！'
+      },
+      {
+        id: 'water', icon: '💧', color: '#42a5f5', title: '② 水分（すいぶん）',
+        quizQ: 'いためると味がぼやけにくいのはなぜ？',
+        quiz: [
+          { t: '水を使わず、余分な水分をとばせるから', c: true },
+          { t: 'ずっとふたをして蒸すから', c: false },
+          { t: '調味料を2倍入れるから', c: false }
+        ],
+        explain: [
+          '水を使わずに加熱するので、味がうすまりにくいです。',
+          '余分な水分をとばすことで、素材の味が<span class="hl" style="background:#42a5f5;">ぎゅっ</span>とします。',
+          '油で表面をコーティングし短時間で焼くため、中のうまみが逃げにくいです。'
+        ],
+        compare: ['水にうまみが流れやすい', '食材の中にうまみがとどまりやすい'],
+        mini: 'つまり、いためると水っぽくなりにくく、食材の味をしっかり感じられる！'
+      },
+      {
+        id: 'time', icon: '⏱️', color: '#ffa726', title: '③ 時間（じかん）',
+        quizQ: 'いためものが早くできる理由は？',
+        quiz: [
+          { t: '弱火でゆっくり30分加熱するから', c: false },
+          { t: '強い火で一気に加熱できるから', c: true },
+          { t: '冷蔵庫で休ませる時間が長いから', c: false }
+        ],
+        explain: [
+          '強い火で一気に加熱するので、数分で完成しやすいです。',
+          '下ごしらえも比較的かんたんで、おなかがすいたときにすぐ作れます。',
+          '忙しい朝の「あと一品」にぴったりです。'
+        ],
+        compare: ['お湯をわかす時間がかかることがある', 'ささっと短時間で作りやすい'],
+        mini: 'つまり、いためる調理は時間がなくても栄養をとりやすいスピード調理！'
+      },
+      {
+        id: 'taste', icon: '😋', color: '#ec407a', title: '④ おいしさ・見た目',
+        quizQ: 'いためると食欲がわく大きな理由は？',
+        quiz: [
+          { t: '香ばしい香りやつやが出るから', c: true },
+          { t: '色が全部白くなるから', c: false },
+          { t: '味が全部同じになるから', c: false }
+        ],
+        explain: [
+          '油を使うとコクとうまみが出て、満足感がアップします。',
+          '焼けたときの香ばしい香りが食欲をそそります。',
+          '油と調味料がからみ、味がなじみます。つやが出て見た目もおいしそうです。'
+        ],
+        compare: ['あっさりしやすい', '香り・コク・つやで食欲アップ'],
+        mini: 'つまり、いためると香り＋コク＋つやで「食べたい！」気持ちが高まる！'
+      },
+      {
+        id: 'nutrition', icon: '🥕', color: '#ab47bc', title: '⑤ 栄養（えいよう）',
+        quizQ: 'いためると栄養面でよいことはどれ？',
+        quiz: [
+          { t: '水に溶けやすい栄養が流れ出にくい', c: true },
+          { t: '栄養が全部なくなる', c: false },
+          { t: '野菜を食べる量がへる', c: false }
+        ],
+        explain: [
+          '水を使わないので、ビタミンCやカリウムなどが流れ出にくいです。',
+          '短時間加熱だから、熱でこわれやすい栄養も残りやすいです。',
+          '油と食べるとビタミンA・Eなどの吸収率がアップ。かさが減ってたくさん食べられます。'
+        ],
+        compare: ['水に栄養が出ることがある', '栄養を守りながら効率よくとれる'],
+        mini: 'つまり、いためると栄養を逃しにくく、体に取りこみやすくできる！'
+      },
+      {
+        id: 'safety', icon: '🛡️', color: '#26a69a', title: '⑥ 安全・衛生（あんぜん・えいせい）',
+        quizQ: 'いためる調理が衛生的な理由は？',
+        quiz: [
+          { t: '高温で加熱して菌をやっつけやすいから', c: true },
+          { t: 'まったく火を使わないから', c: false },
+          { t: 'ずっと水につけるから', c: false }
+        ],
+        explain: [
+          '高温のフライパンでしっかり加熱でき、菌をやっつけやすいです。',
+          '水分が飛ぶので傷みにくく、お弁当や作り置きにも向いています。',
+          'とくにジメジメする6月や夏場にも安心につながります。'
+        ],
+        compare: ['水分が多いと傷みやすいことがある', '水分が少なく傷みにくい'],
+        mini: 'つまり、いためるとしっかり加熱できて、衛生面でも安心しやすい！'
+      }
+    ];
+
+    function renderHome() {
+      return `
+      <section id="home" class="page active">
+        <div class="hero">
+          <p><strong>クリックして調べよう！</strong> 6つの視点から、いためる調理のよさを探検できるよ。</p>
+          <p>クイズ→解説→くらべる→まとめ の順で学べるようになっています。</p>
+        </div>
+        <div class="grid">
+          ${topics.map(t => `
+            <button class="nav-card" style="border-color:${t.color}" onclick="showPage('${t.id}')">
+              <div class="icon" style="background:${t.color}">${t.icon}</div>
+              <h2 class="section-title">${t.title}</h2>
+              <p class="section-sub">タップして学習スタート</p>
+            </button>
+          `).join('')}
+        </div>
+      </section>`;
+    }
+
+    function renderTopic(t) {
+      return `
+      <section id="${t.id}" class="page">
+        <div class="content-card" style="border-left-color:${t.color}">
+          <span class="badge" style="background:${t.color}">${t.icon} ${t.title}</span>
+          <h2 class="section-title">導入クイズ</h2>
+          <p><strong>${t.quizQ}</strong></p>
+          <div class="quiz-options" id="quiz-${t.id}">
+            ${t.quiz.map((o, i) => `<button class="option" onclick="checkQuiz('${t.id}', ${i})">${i+1}. ${o.t}</button>`).join('')}
+          </div>
+          <div class="quiz-result" id="result-${t.id}">答えをえらんでみよう！</div>
+        </div>
+
+        <div class="content-card" style="border-left-color:${t.color}">
+          <h2 class="section-title">ポイント解説</h2>
+          <div class="point-box">${t.explain.map(e => `<p class="point">${e}</p>`).join('')}</div>
+        </div>
+
+        <div class="content-card" style="border-left-color:${t.color}">
+          <h2 class="section-title">比較コーナー（ゆでるとのちがい）</h2>
+          <table>
+            <tr><th>ゆでる</th><th>いためる</th></tr>
+            <tr><td>${t.compare[0]}</td><td>${t.compare[1]}</td></tr>
+          </table>
+        </div>
+
+        <div class="content-card" style="border-left-color:${t.color}">
+          <h2 class="section-title">ミニまとめ</h2>
+          <p class="mini">${t.mini}</p>
+        </div>
+      </section>`;
+    }
+
+    function renderSummary() {
+      return `
+      <section id="summary" class="page">
+        <div class="content-card" style="border-left-color:#8d6e63">
+          <h2 class="section-title">全体まとめ</h2>
+          <p>6つのよさをおさらいしよう！</p>
+          <div class="legend">
+            ${topics.map(t => `<div class="point"><span class="badge" style="background:${t.color}">${t.icon} ${t.title.split(' ')[1]}</span><br>${t.mini.replace('つまり、','')}</div>`).join('')}
+          </div>
+        </div>
+        <div class="content-card" style="border-left-color:#8d6e63">
+          <h2 class="section-title">穴うめチャレンジ</h2>
+          <p><strong>問題：</strong> いためる調理は、短い時間で加熱し、食材の（　　　）や（　　　）を守りやすい。</p>
+          <div class="fill-area">
+            <input id="fill" placeholder="2つのことばを「、」で区切って入力" />
+            <button class="btn" onclick="checkFill()">こたえあわせ</button>
+          </div>
+          <p id="fillResult" class="quiz-result">ヒント：水に流れにくいこと、シャキッとすること！</p>
+        </div>
+      </section>`;
+    }
+
+    const app = document.getElementById('app');
+    app.innerHTML = renderHome() + topics.map(renderTopic).join('') + renderSummary();
+
+    function showPage(id) {
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function checkQuiz(topicId, idx) {
+      const t = topics.find(x => x.id === topicId);
+      const wrap = document.getElementById(`quiz-${topicId}`);
+      const btns = [...wrap.querySelectorAll('.option')];
+      btns.forEach((b, i) => {
+        b.classList.remove('correct', 'wrong');
+        if (t.quiz[i].c) b.classList.add('correct');
+      });
+      const result = document.getElementById(`result-${topicId}`);
+      if (t.quiz[idx].c) {
+        btns[idx].classList.add('correct');
+        result.textContent = '⭕ せいかい！ ' + t.mini;
+      } else {
+        btns[idx].classList.add('wrong');
+        result.textContent = '❌ おしい！ 正解を見て、理由を読んでみよう。';
+      }
+    }
+
+    function checkFill() {
+      const v = document.getElementById('fill').value.replace(/\s/g, '');
+      const ok = (v.includes('栄養') && (v.includes('食感') || v.includes('歯ごたえ')));
+      const out = document.getElementById('fillResult');
+      out.textContent = ok
+        ? 'すごい！正解に近いよ。いためると「栄養」と「食感」を守りやすいね。'
+        : 'もう一回！ ヒント：栄養 + シャキシャキ感。';
+    }
+  </script>
+</body>
+</html>
